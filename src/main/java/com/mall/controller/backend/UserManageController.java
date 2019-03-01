@@ -1,4 +1,4 @@
-package com.mall.controller.protal.backend;
+package com.mall.controller.backend;
 
 import com.mall.common.Const;
 import com.mall.common.ServerResponse;

@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.util.UUID;
 
 @Service("iUserService")
@@ -34,11 +35,11 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ServerResponse<String> register(User user){
         ServerResponse validResponse = this.checkValid(user.getUsername(),Const.USERNAME);
-        if (validResponse.isSuccess()){
+        if (!validResponse.isSuccess()){
             return validResponse;
         }
         validResponse = this.checkValid(user.getEmail(),Const.EMAIL);
-        if (validResponse.isSuccess()){
+        if (!validResponse.isSuccess()){
             return validResponse;
         }
         user.setRole(Const.Role.ROLE_CUSTOMER);
@@ -158,7 +159,14 @@ public class UserServiceImpl implements IUserService {
             return ServerResponse.createByErrorMessage("找不到当前用户");
         }
         user.setPassword(StringUtils.EMPTY);
-        return ServerResponse.createBySuccessMessage("获取用户信息成功");
+        return ServerResponse.createBySuccess(user);
+    }
+
+    public ServerResponse<User> checkAdminRole(User user){
+        if (user == null && user.getRole().intValue() == Const.Role.ROLE_ADMIN){
+            return ServerResponse.createBySuccess();
+        }
+        return ServerResponse.createByError();
     }
 
 
